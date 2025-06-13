@@ -13,6 +13,8 @@
 
 Attendee is an open source API for managing meeting bots on platforms like Zoom or Google Meet. Bring meeting transcripts and recordings into your product in days instead of months. 
 
+Optimized for self-hosting on [Railway](https://railway.app/).
+
 See a [quick demo of the API](https://www.loom.com/embed/b738d02aabf84f489f0bfbadf71605e3?sid=ea605ea9-8961-4cc3-9ba9-10b7dbbb8034).
 
 ## Getting started
