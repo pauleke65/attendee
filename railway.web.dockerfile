@@ -13,16 +13,73 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
     build-essential \
     ca-certificates \
-    python3-pip \
-    libpq-dev \
+    cmake \
     curl \
+    gdb \
+    git \
+    gfortran \
+    libopencv-dev \
+    libdbus-1-3 \
+    libgbm1 \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libglib2.0-dev \
+    libssl-dev \
+    libx11-dev \
+    libx11-xcb1 \
+    libxcb-image0 \
+    libxcb-keysyms1 \
+    libxcb-randr0 \
+    libxcb-shape0 \
+    libxcb-shm0 \
+    libxcb-xfixes0 \
+    libxcb-xtest0 \
+    libgl1-mesa-dri \
+    libxfixes3 \
+    linux-libc-dev \
+    pkgconf \
+    python3-pip \
+    tar \
+    unzip \
+    zip \
+    vim \
+    libpq-dev \
+    xvfb \
+    x11-xkb-utils \
+    xfonts-100dpi \
+    xfonts-75dpi \
+    xfonts-scalable \
+    xfonts-cyrillic \
+    x11-apps \
+    libvulkan1 \
+    fonts-liberation \
+    xdg-utils \
+    wget \
+    libasound2 \
+    libasound2-plugins \
+    alsa \
+    alsa-utils \
+    alsa-oss \
+    pulseaudio \
+    pulseaudio-utils \
+    ffmpeg \
+    universal-ctags \
+    gstreamer1.0-tools \
+    gstreamer1.0-plugins-base \
+    gstreamer1.0-plugins-good \
+    gstreamer1.0-plugins-bad \
+    gstreamer1.0-plugins-ugly \
+    gstreamer1.0-libav \
+    libgstreamer1.0-dev \
+    libgstreamer-plugins-base1.0-dev \
+    libgirepository1.0-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Alias python3 to python
 RUN ln -s /usr/bin/python3 /usr/bin/python
 
-# Install basic Python dependencies
-RUN pip install pyjwt cython python-dotenv
+# Install Python dependencies
+RUN pip install pyjwt cython gdown deepgram-sdk python-dotenv
 
 # Copy requirements and install dependencies
 COPY requirements.txt .
