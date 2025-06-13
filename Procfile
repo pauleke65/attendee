@@ -1,2 +1,2 @@
-web: gunicorn attendee.wsgi
-worker: celery -A attendee worker -l info
+web: bash railway-start.sh
+worker: celery -A attendee worker -l INFO

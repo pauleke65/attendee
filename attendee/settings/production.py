@@ -1,12 +1,11 @@
 import os
-
 import dj_database_url
-
 from .base import *
 
 DEBUG = False
 ALLOWED_HOSTS = ["*"]
 
+# Railway provides DATABASE_URL automatically
 DATABASES = {
     "default": dj_database_url.config(
         env="DATABASE_URL",
@@ -16,17 +15,23 @@ DATABASES = {
     ),
 }
 
-# PRESERVE CELERY TASKS IF WORKER IS SHUT DOWN
-CELERY_TASK_ACKS_LATE = True
-CELERY_WORKER_PREFETCH_MULTIPLIER = 1
-CELERY_TASK_REJECT_ON_WORKER_LOST = True
+# Railway Redis connection
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+CELERY_BROKER_URL = REDIS_URL
+CELERY_RESULT_BACKEND = REDIS_URL
 
+# Security settings
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 SECURE_SSL_REDIRECT = True
-SECURE_HSTS_SECONDS = 60
+SECURE_HSTS_SECONDS = 3600
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
 
+# Static files (Railway handles this)
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
+STATIC_URL = "/static/"
+
+# Email configuration
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = "smtp.mailgun.org"
 EMAIL_HOST_USER = os.getenv("EMAIL_HOST_USER")
@@ -35,14 +40,25 @@ EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 DEFAULT_FROM_EMAIL = "noreply@mail.attendee.dev"
 
-ADMINS = []
+# Celery configuration for production
+CELERY_TASK_ACKS_LATE = True
+CELERY_WORKER_PREFETCH_MULTIPLIER = 1
+CELERY_TASK_REJECT_ON_WORKER_LOST = True
 
+# Error reporting
+ADMINS = []
 if os.getenv("ERROR_REPORTS_RECEIVER_EMAIL_ADDRESS"):
-    ADMINS.append(
-        (
-            "Attendee Error Reports Email Receiver",
-            os.getenv("ERROR_REPORTS_RECEIVER_EMAIL_ADDRESS"),
-        )
-    )
+    ADMINS.append((
+        "Attendee Error Reports Email Receiver",
+        os.getenv("ERROR_REPORTS_RECEIVER_EMAIL_ADDRESS"),
+    ))
 
 SERVER_EMAIL = "noreply@mail.attendee.dev"
+
+# Railway-specific optimizations
+if os.getenv("RAILWAY_ENVIRONMENT"):
+    # Use Railway's internal networking
+    INTERNAL_IPS = ["127.0.0.1", "0.0.0.0"]
+    
+    # Optimize for Railway's container constraints
+    CONN_MAX_AGE = 60
