@@ -1,0 +1,26 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "railway.web.dockerfile"
+
+[deploy]
+startCommand = "bash railway-web-start.sh"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 3
+
+[environments.production]
+variables = { 
+    DJANGO_SETTINGS_MODULE = "attendee.settings.production",
+    SERVICE_TYPE = "web"
+}
+
+# Health check configuration
+[healthcheck]
+path = "/health/"
+port = 8000
+intervalSeconds = 30
+timeoutSeconds = 10
+
+# Resource limits for web service (lighter)
+[resources]
+memory = 1024  # 1GB RAM
+cpu = 1000     # 1 vCPU

@@ -1,0 +1,38 @@
+[build]
+builder = "dockerfile"
+dockerfilePath = "railway.worker.dockerfile"
+
+[deploy]
+startCommand = "bash railway-worker-start.sh"
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 5
+
+[environments.production]
+variables = { 
+    DJANGO_SETTINGS_MODULE = "attendee.settings.production",
+    SERVICE_TYPE = "worker"
+}
+
+# No health check for worker service (it's a background process)
+# Worker services don't expose HTTP endpoints
+
+# Resource limits for worker service (heavier for Chrome/audio processing)
+[resources]
+memory = 4096  # 4GB RAM (needed for Chrome + video processing)
+cpu = 2000     # 2 vCPU (needed for real-time audio/video)
+
+# Worker-specific configuration
+[worker]
+# Allow longer startup time for Chrome initialization
+startupTimeoutSeconds = 120
+
+# Environment variables specific to worker operations
+[environments.production.worker]
+variables = {
+    # Chrome flags for headless operation
+    CHROME_FLAGS = "--no-sandbox --disable-dev-shm-usage --disable-gpu --remote-debugging-port=9222",
+    # PulseAudio configuration
+    PULSE_RUNTIME_PATH = "/var/run/pulse",
+    # Worker concurrency
+    CELERY_CONCURRENCY = "2"
+}
