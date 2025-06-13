@@ -6,14 +6,28 @@ DEBUG = False
 ALLOWED_HOSTS = ["*"]
 
 # Railway provides DATABASE_URL automatically
-DATABASES = {
-    "default": dj_database_url.config(
-        env="DATABASE_URL",
-        conn_max_age=600,
-        conn_health_checks=True,
-        ssl_require=True,
-    ),
-}
+DATABASE_URL = os.getenv('DATABASE_URL')
+if DATABASE_URL:
+    DATABASES = {
+        "default": dj_database_url.config(
+            env="DATABASE_URL",
+            conn_max_age=600,
+            conn_health_checks=True,
+            ssl_require=True,
+        ),
+    }
+else:
+    # Fallback for local development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': os.getenv('POSTGRES_DB', 'attendee_production'),
+            'USER': os.getenv('POSTGRES_USER', 'postgres'),
+            'PASSWORD': os.getenv('POSTGRES_PASSWORD', ''),
+            'HOST': os.getenv('POSTGRES_HOST', 'localhost'),
+            'PORT': os.getenv('POSTGRES_PORT', '5432'),
+        }
+    }
 
 # Railway Redis connection
 REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379/0")
@@ -59,6 +73,6 @@ SERVER_EMAIL = "noreply@mail.attendee.dev"
 if os.getenv("RAILWAY_ENVIRONMENT"):
     # Use Railway's internal networking
     INTERNAL_IPS = ["127.0.0.1", "0.0.0.0"]
-    
+
     # Optimize for Railway's container constraints
     CONN_MAX_AGE = 60
