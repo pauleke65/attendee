@@ -1,2 +1,2 @@
-web: bash railway-start.sh
-worker: celery -A attendee worker -l INFO
+web: bash railway-web-start.sh
+worker: bash railway-worker-start.sh
